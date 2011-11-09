@@ -1,7 +1,7 @@
 (function( $ ){
 	
 	var defaults = {
-		'namespace': 'wobs',
+		'namespace': 'hls',
 		'defaultView' : 'month',
 		'today' : new Date(),
 		'date' : new Date(),
@@ -181,15 +181,16 @@
 		}
 		
 		function widgetView() {
-			var table, tr, td, dateBox;
+			var table, tr, td, dateBox, ns;
 			
-			table = $("<table><tbody></tbody></table>");
-			tr = $("<tr/>");
+            ns = options.namespace ? options.namespace + "-" : "";
+			table = $('<table><tbody></tbody></table>');
+			tr = $('<tr/>');
 			
 			for (var j=0; j<7; j++) {
 				
-				td = $("<td/>");
-				td.addClass("wobs-day-"+j);
+				td = $('<td/>');
+				td.addClass(ns+'day-'+j);
 				
 				dateBox = new DayBox(j, td, options);
 				_date_cache.push(dateBox);
@@ -198,9 +199,7 @@
 			}
 			
 			table.append(tr);
-			
 			setWidgetViewDates();
-			
 			element.append(table);
 		}
 		
@@ -228,24 +227,26 @@
 		}
 		
 		function monthView() {
-			var table, thead, tbody, tr, td, th, dateBox, dayIndex;
+			var table, thead, tbody, tr, td, th, dateBox, dayIndex, ns;
 			
-			table = $("<table/>");
-			tbody = $("<tbody/>");
+            ns = options.namespace ? options.namespace + "-" : "";
+
+			table = $('<table/>');
+			tbody = $('<tbody/>');
 			
 			//show the names of the days of the week on the calendar
 			if(options.showDayNames) {
-				thead = $("<thead/>");
-				thead.append("<tr/>");
+				thead = $('<thead/>');
+				thead.append('<tr/>');
 				
 				//make the <thead> <tr> <th>s
 				for(var i=0; i<7; i++) {
-					th = $("<th/>");
+					th = $('<th/>');
 					
 					dayIndex = (options.firstDay + i) % 7;
 					th.append(options.dayNames[dayIndex]);
 					
-					thead.find("tr").append(th);
+					thead.find('tr').append(th);
 				}
 				
 				table.append(thead)
@@ -254,21 +255,21 @@
 			//make the <tbody> <tr>s
 			for(var i=0; i < 6; i++) {
 				
-				tr = $("<tr/>");
-				tr.addClass("wobs-week-"+i);
+				tr = $('<tr/>');
+				tr.addClass(ns+'week-'+i);
 				
 				if(i === 0) {
-					tr.addClass("wobs-week-first");
+					tr.addClass(ns+'week-first');
 				}
 				else if(i === 5) {
-					tr.addClass("wobs-week-last");
+					tr.addClass(ns+'week-last');
 				}
 				
 				for (var j=0; j<7; j++) {
 					var dayNum = i*7+j;
 					
-					td = $("<td/>");
-					td.addClass("wobs-day-"+dayNum);
+					td = $('<td/>');
+					td.addClass(ns+'day-'+dayNum);
 					
 					dateBox = new DayBox(t, td, options);
 					_date_cache.push(dateBox);
@@ -323,11 +324,11 @@
 		
 		ns = options.namespace ? options.namespace + "-" : "";
 			
-		ul = $('<ul class="calendar-nav"/>');
+		ul = $('<ul class="'+ns+'calendar-nav"/>');
 		
 		if (options.navigation === true) {
-			html = html + '<li class="'+ns+'button-next"><a>Next</a></li>';
-			html = html + '<li class="'+ns+'button-prev"><a>Prev</a></li>';
+			html = html + '<li class="'+ns+'button-next"><a>&gt;</a></li>';
+			html = html + '<li class="'+ns+'button-prev"><a>&lt;</a></li>';
 		}	
 		
 		html = html + '<li class="'+ns+'calendar-month"><p></p></li>';
