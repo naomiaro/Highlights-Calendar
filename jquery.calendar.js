@@ -10,8 +10,8 @@
         'monthNames': ['January','February','March','April','May','June','July','August','September','October','November','December'],
         'navigation': true,
         'showDayNames': true,
-        'earliestMonth': new Date(2011, 8),
-        'latestMonth': new Date(2012, 1),
+        //'earliestMonth': new Date(2011, 8),
+        //'latestMonth': new Date(2012, 1),
         'articles': "json-events.php"
     };
   
@@ -173,7 +173,7 @@
         
         //date is a js Date object.
         function retrieveDateFromCache(date) {
-            var one_day, diff;
+            var diff;
             
             diff = date.getDaysFrom(_start);
             
@@ -214,10 +214,10 @@
             for (var c=_date_cache.length-1; c>-1; c--) {
                 tmp_date = new Date(y, m, d);
                 
-                if(c == 0) {
+                if(c === 0) {
                     _start = tmp_date;
                 }
-                else if(c == _date_cache.length-1) {
+                else if(c === _date_cache.length-1) {
                     _end = tmp_date;
                 }
                 
@@ -339,7 +339,7 @@
         enableHeader();
         
         ul.find('.'+ns+'button-prev').click(function(){
-            var date, mm, yyyy, newDate;
+            var date;
             
             if ($(this).hasClass(ns+'state-disabled')) {
                 return;
@@ -354,7 +354,7 @@
         });
         
         ul.find('.'+ns+'button-next').click(function(){
-            var date, mm, yyyy, newDate;
+            var date;
             
             if ($(this).hasClass(ns+'state-disabled')) {
                 return;
