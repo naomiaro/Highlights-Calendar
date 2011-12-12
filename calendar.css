@@ -79,9 +79,9 @@
 	margin: 10px 10px 0 auto;
 	font-size:15px;
 	text-align:center;
-	width:29px;
-	line-height:29px;
-	height:29px;
+	width:26px;
+	line-height:26px;
+	height:26px;
 	color:#1a1a1a;
 	z-index:12;
 	background:#fff;
@@ -89,8 +89,7 @@
     opacity:0.6;
 }
 .calendar .hls-date-label.hls-today {
-    border: 1px solid #14d878;
-    color: #14d878;
+    opacity: 1.0;
 }
 
 .calendar .hls-other-month .hls-date-content {
@@ -107,13 +106,15 @@
 
 .calendar a:hover .hls-date-title{
     display: block;
-	color:#1a1a1a;
+	color:#000;
     background:#fff;
-    opacity: 0.6;
+    font-size: 12px;
+    opacity: 0.8;
     width: 85%;
     margin: 10px auto;
     text-align: center;
     padding: 2px 1px;
+    border: none;
 }
 
 .hls-calendar-nav {
@@ -144,21 +145,21 @@
     padding: 0 0 0 0;
     text-align: right;
 }
-.hls-calendar-nav li.hls-button-prev, .hls-hls-calendar-nav li.hls-button-next {
+.hls-calendar-nav li.hls-button-prev, .hls-calendar-nav li.hls-button-next {
     height: 18px;
 	width: 24px;
+    background:#ebebeb;
+	border:1px solid #a9a9a9;
+    color:#acacac;
+    font-size: 14px;
 }
-.hls-calendar-nav li.hls-button-prev a, .hls-hls-calendar-nav li.hls-button-next a {
+.hls-calendar-nav li.hls-button-prev a, .hls-calendar-nav li.hls-button-next a {
     display: block;
-    height: 18px;
-    width: 24px;
+    text-align: center;
+    margin-top: 1px;
 }
 
-.hls-calendar-nav li.hls-button-prev a {
-    background-position: 0 -56px;
-}
-
-.hls-calendar-nav li.hls-button-prev.disabled a, .hls-hls-calendar-nav li.hls-button-next.disabled a {
+.hls-calendar-nav li.hls-button-prev.disabled a, .hls-calendar-nav li.hls-button-next.disabled a {
     background-position: 0 -28px;
 	cursor: default;
 }
