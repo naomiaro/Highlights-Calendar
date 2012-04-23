@@ -1,7 +1,7 @@
 (function( $ ){
     
     var defaults = {
-        'namespace': 'hls',
+        'namespace': '',
         'defaultView' : 'month',
         'today' : new Date(),
         'date' : new Date(),
@@ -12,7 +12,12 @@
         'showDayNames': true,
         //'earliestMonth': new Date(2011, 8),
         //'latestMonth': new Date(2012, 1),
-        'articles': "json-events.php"
+        'articles': "json-events.php",
+        'title': "Artikel des Tages",
+        'buttons': {
+        	'prev': "Vorheriger Monat",
+        	'next': "Nächster Monat"
+        }
     };
   
     var methods = {
@@ -91,8 +96,8 @@
         function render() {
     
             if (_view === 'month') {
+            	_header = new Header(t, element, options);
                 monthView();
-                _header = new Header(t, element, options);
             }
             else if(_view === 'widget') {
                 widgetView();
@@ -227,20 +232,21 @@
         }
         
         function monthView() {
-            var table, thead, tbody, tr, td, th, dateBox, dayIndex, ns;
-            
-            ns = options.namespace ? options.namespace + "-" : "";
-
-            table = $('<table/>');
-            tbody = $('<tbody/>');
+            var $ul, 
+	            $li, 
+	            dateBox, 
+	            ns = options.namespace ? options.namespace + "-" : "",
+	            i;
+           
+            $ul = $('<ul/>', {
+            	'class': ns+'calendar-list '+ns+'clearfix'
+            });
             
             //show the names of the days of the week on the calendar
-            if(options.showDayNames) {
-                thead = $('<thead/>');
-                thead.append('<tr/>');
-                
-                //make the <thead> <tr> <th>s
-                for(var i=0; i<7; i++) {
+            if (options.showDayNames) {
+
+            	/*
+                for (i = 0; i < 7; i++) {
                     th = $('<th/>');
                     
                     dayIndex = (options.firstDay + i) % 7;
@@ -248,43 +254,22 @@
                     
                     thead.find('tr').append(th);
                 }
-                
-                table.append(thead)
+            	*/
             }
             
-            //make the <tbody> <tr>s
-            for(var i=0; i < 6; i++) {
+            for (i = 0; i < 42; i++) {
                 
-                tr = $('<tr/>');
-                tr.addClass(ns+'week-'+i);
+                $li = $('<li/>');
                 
-                if(i === 0) {
-                    tr.addClass(ns+'week-first');
-                }
-                else if(i === 5) {
-                    tr.addClass(ns+'week-last');
-                }
+                dateBox = new DayBox(t, $li, options);
+                _date_cache.push(dateBox);
                 
-                for (var j=0; j<7; j++) {
-                    var dayNum = i*7+j;
-                    
-                    td = $('<td/>');
-                    td.addClass(ns+'day-'+dayNum);
-                    
-                    dateBox = new DayBox(t, td, options);
-                    _date_cache.push(dateBox);
-                    
-                    tr.append(td);
-                }
-                
-                tbody.append(tr);
+                $ul.append($li);
             }
-            
-            table.append(tbody);
             
             setMonthViewDates();
                 
-            element.append(table);
+            element.append($ul);
         }   
         
         function setMonthViewDates() {
@@ -302,7 +287,7 @@
                 d = d - 7;
             }
 
-            for (var c=0; c<_date_cache.length; c++) {
+            for (var c = 0; c < _date_cache.length; c++) {
                 tmp_date = new Date(y, m, d);
                 
                 if(c == 0) {
@@ -320,55 +305,54 @@
     
     function Header(calendar, element, options) {
         
-        var t, ul, html='', ns;
-        
-        ns = options.namespace ? options.namespace + "-" : "";
-            
-        ul = $('<ul class="'+ns+'calendar-nav"/>');
+        var html='', 
+	        ns = options.namespace ? options.namespace + "-" : "",
+	        $ul = $('<ul class="'+ns+'calendar-nav"/>'),
+	        $div = $('<div class="'+ns+'top"><h4>'+options.title+'</h4><h3></h3></div>');
         
         if (options.navigation === true) {
-            html = html + '<li class="'+ns+'button-next"><a>&gt;</a></li>';
-            html = html + '<li class="'+ns+'button-prev"><a>&lt;</a></li>';
-        }   
+        	html = html + '<li class="'+ns+'button-prev grey-button"><a>'+options.buttons.prev+'</a></li>';
+            html = html + '<li class="'+ns+'button-next grey-button"><a>'+options.buttons.next+'</a></li>';   
+         
+	        $ul.append(html);
+	        
+	        updateHeader(calendar.getCalendarDate());
+	        enableHeader();
+	        
+	        $ul.find('.'+ns+'button-prev').click(function() {
+	            var date;
+	            
+	            if ($(this).hasClass(ns+'state-disabled')) {
+	                return;
+	            }
+	
+	            disableHeader();        
+	            date = calendar.addMonths(-1);
+	
+	            updateHeader(date);
+	            calendar.redraw();
+	            enableHeader();         
+	        });
+	        
+	        $ul.find('.'+ns+'button-next').click(function(){
+	            var date;
+	            
+	            if ($(this).hasClass(ns+'state-disabled')) {
+	                return;
+	            }
+	            
+	            disableHeader();
+	            date = calendar.addMonths(1);
+	            
+	            updateHeader(date);
+	            calendar.redraw();
+	            enableHeader();
+	        });
+	        
+	        $div.append($ul);
+        }
         
-        html = html + '<li class="'+ns+'calendar-month"><p></p></li>';
-            
-        ul.append(html);
-        
-        updateHeader(calendar.getCalendarDate());
-        enableHeader();
-        
-        ul.find('.'+ns+'button-prev').click(function(){
-            var date;
-            
-            if ($(this).hasClass(ns+'state-disabled')) {
-                return;
-            }
-
-            disableHeader();        
-            date = calendar.addMonths(-1);
-
-            updateHeader(date);
-            calendar.redraw();
-            enableHeader();         
-        });
-        
-        ul.find('.'+ns+'button-next').click(function(){
-            var date;
-            
-            if ($(this).hasClass(ns+'state-disabled')) {
-                return;
-            }
-            
-            disableHeader();
-            date = calendar.addMonths(1);
-            
-            updateHeader(date);
-            calendar.redraw();
-            enableHeader();
-        });
-        
-        element.append(ul);
+        element.append($div);
         
         function disableHeader() {
             
@@ -401,33 +385,34 @@
         }
         
         function activateButton(buttonName) {
-            ul.find('.'+ns+'button-'+buttonName)
+            $ul.find('.'+ns+'button-'+buttonName)
                 .removeClass('disabled');
         }   
         
         function deactivateButton(buttonName) {
-            ul.find('.'+ns+'button-'+buttonName)
+            $ul.find('.'+ns+'button-'+buttonName)
                 .addClass('disabled');
         }
             
         function disableButton(buttonName) {
-            ul.find('.'+ns+'button-'+buttonName)
+            $ul.find('.'+ns+'button-'+buttonName)
                 .addClass(ns+'state-disabled');
         }
             
         function enableButton(buttonName) {
-            ul.find('.'+ns+'button-'+buttonName)
+            $ul.find('.'+ns+'button-'+buttonName)
                 .removeClass(ns+'state-disabled')
                 .removeClass('disabled');
         }
         
         function updateHeader(date) {
-            var month, yyyy;
+            var month, 
+            	yyyy;
             
             yyyy = date.getFullYear();
             month = options.monthNames[date.getMonth()]; 
-            
-            ul.find('.'+ns+'calendar-month p')
+           
+            $div.find('h3')
                 .empty()
                 .append(month+" "+yyyy);
         }
@@ -435,7 +420,7 @@
         return this;
     }
     
-    function DayBox(calendar, td, options) {
+    function DayBox(calendar, $li, options) {
         
         var _date = undefined;
         var _title = undefined;
@@ -450,12 +435,8 @@
         this.setUrl = setUrl;
         this.clear = clear;
         
-        function buildTd() {
-            td.append('<div class="'+ns+'date-content"><a></a></div>')
-                .find("a")
-                .append('<div class="'+ns+'date-container"/>')
-                    .find('.'+ns+'date-container')
-                    .append('<div class="'+ns+'date-label"/>');
+        function buildLI() {
+            $li.append("<a><h5></h5><span></span><img></img></a>");
         }
 
         function isCurrentMonth() {
@@ -499,38 +480,33 @@
             
             _date = date;
     
-            td.find('.'+ns+'date-label')
+            $li.find('span')
                 .append(date.getDate());
             
-            if (isCurrentMonth()) {
-                td.addClass(ns+'curr-month');
-            }
-            else {
-                td.addClass(ns+'other-month');
+            if (!isCurrentMonth()) {
+                $li.addClass(ns+'inactive');
             }
 
             if (isToday()) {
-                td.find('.'+ns+'date-label').addClass(ns+'today');
+                $li.addClass(ns+'today');
             }
         }
         
         function setTitle(title) {
             _title = title;
             
-            $(td)
-                .find('.'+ns+'date-container')
-                .append('<div class="'+ns+'date-title">'+title+'</div>');
+            $li.find('h5').append(title);
         }
         
-        function setThumbnail(picture) {
-            _s_image = picture;
+        function setThumbnail(url) {
+            _s_image = url;
             
-            td.find("a").append('<img src="'+_s_image+'"></img>');
+            $li.find("img").attr("src", url);
         }
         
         function setUrl(url) {
             _url = url;
-            td.find("a").attr("href", url);
+            $li.find("a").attr("href", url);
         }
         
         function clear() {
@@ -539,12 +515,12 @@
             _s_image = undefined;
             _url = undefined;
             
-            td.empty();
-            buildTd();
+            $li.empty();
+            buildLI();
         }
 
         //create the initial content within the td.
-        buildTd();
+        buildLI();
     }
     
 })( jQuery );
